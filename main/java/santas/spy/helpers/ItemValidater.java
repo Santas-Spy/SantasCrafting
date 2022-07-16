@@ -108,7 +108,9 @@ public class ItemValidater
             keys = enchantments.getKeys(false);
             for (String cur : keys)
             {
-                itemMeta.addEnchant(Enchantment.getByKey(NamespacedKey.minecraft(enchantments.getString(cur + ".type"))), enchantments.getInt(cur + ".level"), config.getBoolean("allow-op-enchants"));
+                if (!itemMeta.addEnchant(Enchantment.getByKey(NamespacedKey.minecraft(enchantments.getString(cur + ".type"))), enchantments.getInt(cur + ".level"), true)) {
+                    SantasCrafting.PLUGIN.debugMessage("Error adding enchantment " + cur, 0);
+                }
             }
         }
 

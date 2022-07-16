@@ -3,6 +3,7 @@ package santas.spy;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.bstats.bukkit.Metrics;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -22,6 +23,7 @@ public class SantasCrafting extends JavaPlugin
         this.getCommand("santascrafting").setExecutor(new CommandListener());
         Config.initialize();
         registerRecipes();
+        getbstats();
     }
 
     @Override
@@ -50,5 +52,11 @@ public class SantasCrafting extends JavaPlugin
     public void addRecipeToList(NamespacedKey key)
     {
         recipeList.add(key);
+    }
+
+    private void getbstats()
+    {
+        int pluginID = 15796;
+        Metrics metrics = new Metrics(this, pluginID);
     }
 }
