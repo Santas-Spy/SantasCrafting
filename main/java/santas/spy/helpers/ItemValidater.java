@@ -89,6 +89,7 @@ public class ItemValidater
     public static ItemStack giveCustomItem(String itemName)
     {
         FileConfiguration config = Config.getCustomItemConfig();
+        Set<String> keys;
 
         //get Material
         String searchKey = itemName + ".type";
@@ -103,25 +104,33 @@ public class ItemValidater
         //get Enchantments
         searchKey = itemName + ".enchantments";
         ConfigurationSection enchantments = config.getConfigurationSection(searchKey);
-        Set<String> keys = enchantments.getKeys(false);
-        for (String cur : keys)
-        {
-            itemMeta.addEnchant(Enchantment.getByKey(NamespacedKey.minecraft(enchantments.getString(cur + ".type"))), enchantments.getInt(cur + ".level"), config.getBoolean("allow-op-enchants"));
+        if (enchantments != null) {
+            keys = enchantments.getKeys(false);
+            for (String cur : keys)
+            {
+                itemMeta.addEnchant(Enchantment.getByKey(NamespacedKey.minecraft(enchantments.getString(cur + ".type"))), enchantments.getInt(cur + ".level"), config.getBoolean("allow-op-enchants"));
+            }
         }
 
         //get Name
         searchKey = itemName + ".name";
-        itemMeta.setDisplayName(config.getString(searchKey));
+        String name = config.getString(searchKey);
+        if (name != null) {
+            itemMeta.setDisplayName(name);
+        }
 
         //get Lore
         searchKey = itemName + ".lore";
-        keys = config.getConfigurationSection(searchKey).getKeys(false);
-        List<String> lore = (List<String>)(new LinkedList<String>());
-        for (String cur : keys)
-        {
-            lore.add(config.getString(searchKey + "." + cur));
+        ConfigurationSection rawLore = config.getConfigurationSection(searchKey);
+        if (rawLore != null) {
+            keys = rawLore.getKeys(false);
+            List<String> lore = (List<String>)(new LinkedList<String>());
+            for (String cur : keys)
+            {
+                lore.add(config.getString(searchKey + "." + cur));
+            }
+            itemMeta.setLore(lore);
         }
-        itemMeta.setLore(lore);
 
         //get Item Flags
         searchKey = itemName + ".flags";

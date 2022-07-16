@@ -1,5 +1,6 @@
 package santas.spy.listeners;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -15,63 +16,79 @@ public class CommandListener implements CommandExecutor
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) 
     {
         if (args.length == 0) {
-            sender.sendMessage("/santascrafting reload: Reload the plugin");
-            sender.sendMessage("/santascrafting give <item> [count]: Gives you the custom item under that name");
-            sender.sendMessage("/santascrafting list: Lists the names of all custom items");
+            help(sender);
         } else {
             switch (args[0])
             {
                 case "reload":
-                    if (sender instanceof Player)
-                    {
-                        Player player = (Player)sender;
-                        if (player.hasPermission("santascrafting.reload"))
-                        {
-                            sender.sendMessage("reloading config");
-                            Config.reload();
-                        } else {
-                            player.sendMessage("You do not have permission to use this command");
-                        }
-                    } else {
-                        sender.sendMessage("reloading config");
+                    if (checkPerms("santascrafting.reload", sender)) {
+                        sender.sendMessage("Reloading Config");
                         Config.reload();
+                    } else {
+                        sender.sendMessage("You do not have permission to use this command");
                     }
                     break;
                 case "give":
-                    if (sender instanceof Player)
-                    {
-                        Player player = (Player)sender;
-                        if (player.hasPermission("santascrafting.give"))
-                        {
-                            if (ItemValidater.isNameOfCustomItem(args[1]))
-                            {
-                                ItemStack item = ItemValidater.giveCustomItem(args[1]);
-                                if (args.length > 2) {
+                    if (checkPerms("santascrafting.give", sender)) {
+                        Player player = Bukkit.getPlayer(args[1]);
+                        if (player == null) {
+                            sender.sendMessage("Could not find player " + args[1]);
+                        } else {
+                            if (ItemValidater.isNameOfCustomItem(args[2])) {
+                                ItemStack item = ItemValidater.giveCustomItem(args[2]);
+                                if (args.length > 3) {
                                     try {
-                                        item.setAmount(Integer.parseInt(args[2]));
+                                        item.setAmount(Integer.parseInt(args[3]));
+                                        player.sendMessage("You have been given " + args[2] + " x" + args[3]);
+                                        player.getInventory().addItem(item);
                                     } catch (NumberFormatException e) {
-                                        sender.sendMessage(args[2] + " is not a valid number");
+                                        sender.sendMessage(args[3] + " is not a valid number");
                                     }
                                 }
-                                sender.sendMessage("You have been given " + args[1]);
-                                player.getInventory().addItem(item);
                             } else {
-                                player.sendMessage("[SantasCrafting] " + args[1] + " is not a valid item");
+                                sender.sendMessage(args[2] + " is not a valid item");
                             }
-                        } else {
-                            player.sendMessage("You do not have permission to use this command");
                         }
+                    } else {
+                        sender.sendMessage("You do not have permission to use this command");
                     }
                     break;
                 case "list":
-                    for (String name : Config.getCustomItemKeys()) {
-                        sender.sendMessage(name);
+                    if (checkPerms("santascrafting.list", sender)) {
+                        for (String name : Config.getCustomItemKeys()) {
+                            sender.sendMessage(name);
+                        }
+                    } else {
+                        sender.sendMessage("You do not have permission to use this command");
                     }
+                    break;
+                case "help":
+                    help(sender);
                     break;
                 default:
                     sender.sendMessage("Unknown Command");
             }
         }
         return false;
+    }
+
+    private boolean checkPerms(String perm, CommandSender sender)
+    {
+        boolean hasPerm = true;
+        if (sender instanceof Player) {
+            if (!((Player)sender).hasPermission(perm)) {
+                hasPerm = false;
+            }
+        }
+
+        return hasPerm;
+    }
+
+    private void help(CommandSender sender)
+    {
+        sender.sendMessage("/santascrafting help: Displays this list");
+        sender.sendMessage("/santascrafting reload: Reload the plugin");
+        sender.sendMessage("/santascrafting give <player> <item> [count]: Gives you the custom item under that name");
+        sender.sendMessage("/santascrafting list: Lists the names of all custom items");
     }
 }

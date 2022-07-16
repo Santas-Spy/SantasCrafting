@@ -5,3 +5,20 @@ api-version: 1.18
 commands:
   santascrafting:
     description: SantasCrafting main command
+permissions:
+  santascrafting.reload:
+    description: Allows the user to reload the plugin
+    default: op
+  santascrafting.give:
+    description: Allows the user to use the give command
+    default: op
+  santascrafting.list:
+    description: Allows the user to list the custom items
+    default: op
+  santascrafting.*:
+    description: Gives all santascrafting permissions
+    default: op
+    children:
+      santascrafting.reload: true
+      santascrafting.give: true
+      santascrafting.list: true
