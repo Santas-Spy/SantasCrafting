@@ -1,0 +1,27 @@
+#for help with creating items, check out the wiki --> https://github.com/Santas-Spy/SantasCrafting/wiki/items.yml
+
+Knockback-Stick:
+  type: stick
+  name: "&cKnockback Stick"
+  lore: 
+    line1: Knock your foes into tomorrow
+  enchantments:
+    1:
+      type: knockback
+      level: 99
+  recipe:
+    line1: [X, X, X]
+    line2: [CUSTOM:Knockback-Juice, stick, CUSTOM:Knockback-Juice]
+    line3: [X, X, X]
+    gives: 1
+
+Knockback-Juice:
+  type: slime_ball
+  name: "&aKnockback Juice"
+  lore:
+    line1: A super bouncy compound
+  enchantments:
+    1:
+      type: unbreaking
+      level: 1
+  flags: [hide_enchants]
