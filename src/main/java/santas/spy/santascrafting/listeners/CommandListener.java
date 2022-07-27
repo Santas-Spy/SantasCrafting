@@ -45,7 +45,7 @@ public class CommandListener implements CommandExecutor
                                         sender.sendMessage(args[3] + " is not a valid number");
                                     }
                                 } else {
-                                    player.sendMessage("You have been given " + args[2] + " x" + args[3]);
+                                    player.sendMessage("You have been given " + args[2] + " x1");
                                     player.getInventory().addItem(item);
                                 }
                             } else {
